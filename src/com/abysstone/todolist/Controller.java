@@ -2,11 +2,18 @@ package com.abysstone.todolist;
 
 import com.abysstone.todolist.datamodel.TodoData;
 import com.abysstone.todolist.datamodel.TodoItem;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
@@ -14,8 +21,12 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+
+//import java.awt.event.KeyEvent;
 
 public class Controller {
 
@@ -30,7 +41,30 @@ public class Controller {
     @FXML
     private BorderPane mainBorderPane;
 
+    @FXML
+    private ContextMenu listContextMenu;
+
+    @FXML
+    private ToggleButton filterToggleButton;
+
+    private FilteredList<TodoItem> filteredList;
+
+    private Predicate<TodoItem> wantAllItems;
+    private Predicate<TodoItem> wantTodaysItems;
+
     public void initialize() {
+
+        listContextMenu = new ContextMenu();
+        MenuItem deleteMenuItem = new MenuItem("Delete");
+        deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TodoItem item = todoListView.getSelectionModel().getSelectedItem();
+                deleteItem(item);
+            }
+        });
+
+        listContextMenu.getItems().add(deleteMenuItem);
 
         //        TodoItem item1 = new TodoItem("Munna's birthday card", "Buy a 27th birthday card for Munna",
 //                LocalDate.of(2019, Month.SEPTEMBER, 21));
@@ -63,15 +97,57 @@ public class Controller {
 
                 }
             }
-        });
+        }); //calling full initialization probably coz sorted is also working after adding a new entry after creating sorted list.
+
+
+
+//        filteredList = new FilteredList<TodoItem>(TodoData.getInstance().getTodoItems(),
+//                new Predicate<TodoItem>() {
+//                    @Override
+//                    public boolean test(TodoItem item) {
+//                        return true;
+//                    }
+//                });
+
+//        SortedList<TodoItem> sortedList = new SortedList<TodoItem>(TodoData.getInstance().getTodoItems(),
+//                new Comparator<TodoItem>() {
+//                    @Override
+//                    public int compare(TodoItem o1, TodoItem o2) {
+//                        return o1.getDeadline().compareTo(o2.getDeadline());
+//                    }
+//                });
+
+        wantAllItems = new Predicate<TodoItem>() {
+            @Override
+            public boolean test(TodoItem item) {
+                return true;
+            }
+        };
+
+        wantTodaysItems = new Predicate<TodoItem>() {
+            @Override
+            public boolean test(TodoItem item) {
+                return (item.getDeadline().equals(LocalDate.now()));
+            }
+        };
+
+        filteredList = new FilteredList<TodoItem>(TodoData.getInstance().getTodoItems(),wantAllItems);
+
+        SortedList<TodoItem> sortedList = new SortedList<TodoItem>(filteredList,
+                new Comparator<TodoItem>() {
+                    @Override
+                    public int compare(TodoItem o1, TodoItem o2) {
+                        return o1.getDeadline().compareTo(o2.getDeadline());
+                    }
+                });
+
 
 
        // todoListView.getItems().setAll(TodoData.getInstance().getTodoItems());
-        todoListView.setItems(TodoData.getInstance().getTodoItems());
+        //todoListView.setItems(TodoData.getInstance().getTodoItems());                               //BINDING and observable population
+        todoListView.setItems(sortedList);
         todoListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         todoListView.getSelectionModel().selectFirst();
-
-
 
 
 
@@ -94,21 +170,29 @@ public class Controller {
                             }else if(item.getDeadline().equals(LocalDate.now().plusDays(1))){
                                 setTextFill(Color.BROWN);
                             }else if(item.getDeadline().isBefore(LocalDate.now())){
-                                setTextFill(Color.DARKGREY);
+                                setTextFill(Color.DARKORANGE);
                             }
                         }
                     }
                 };
+
+                cell.emptyProperty().addListener(
+                        (obs, wasEmpty, isNowEmpty) ->{
+                            if(isNowEmpty){
+                                cell.setContextMenu(listContextMenu);
+                            }else
+                                cell.setContextMenu(listContextMenu);
+                        }
+                );
                 return cell;
             }
         });
 
 
 
-
-
-
     }
+
+
 
     @FXML
     public void showNewItemDialog(){
@@ -146,10 +230,21 @@ public class Controller {
 //            todoListView.getItems().setAll(TodoData.getInstance().getTodoItems());      //Now handled using dataBinding
             todoListView.getSelectionModel().select(newItem);
         }//else {
-//            System.out.println("Cancle pressed");
+//            System.out.println("Cancel pressed");
 //        }
 
     }
+
+    @FXML
+    public void handleKeyPressed(KeyEvent keyEvent){
+        TodoItem selectedItem = todoListView.getSelectionModel().getSelectedItem();
+        if(selectedItem != null){
+            if(keyEvent.getCode().equals(KeyCode.DELETE)){
+                deleteItem(selectedItem);
+            }
+        }
+    }
+
 
     @FXML
     public void handleClickListView(){
@@ -167,4 +262,60 @@ public class Controller {
         deadLineLabel.setText(item.getDeadline().toString());
 
     }
+
+    public void deleteItem(TodoItem item){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Todo Item");
+        alert.setHeaderText("Delete item : "+ item.getShortDescription());
+        alert.setContentText("Are you sure? Press Ok to confirm or Cancel to back out.");
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if(result.isPresent() && (result.get() == ButtonType.OK)){
+            TodoData.getInstance().deleteTodoItem(item);
+        }
+    }
+
+
+//    public void handleFilterButton(){
+//        if(filterToggleButton.isSelected()){
+//            filteredList.setPredicate(new Predicate<TodoItem>() {
+//                @Override
+//                public boolean test(TodoItem item) {
+//                    return (item.getDeadline().equals(LocalDate.now()));
+//                }
+//            });
+//        }else {
+//            filteredList.setPredicate(new Predicate<TodoItem>() {
+//                @Override
+//                public boolean test(TodoItem item) {
+//                    return true;
+//                }
+//            });
+//        }
+//    }
+    @FXML
+    public void handleFilterButton(){
+        TodoItem selectedItem = todoListView.getSelectionModel().getSelectedItem();
+        if(filterToggleButton.isSelected()){
+            filteredList.setPredicate(wantTodaysItems);
+            if(filteredList.isEmpty()){
+                itemDetailsTextArea.clear();
+                deadLineLabel.setText("");
+            }else if(filteredList.contains(selectedItem)){
+                todoListView.getSelectionModel().select(selectedItem);
+            }else {
+                todoListView.getSelectionModel().selectFirst();
+            }
+            }else{
+                filteredList.setPredicate(wantAllItems);
+                todoListView.getSelectionModel().select(selectedItem);
+        }
+    }
+
+    @FXML
+    public void handleExit(){
+        Platform.exit();
+    }
+
+
 }
