@@ -13,8 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 
 
-
-
 public class TodoData {
 
 
@@ -60,7 +58,7 @@ public class TodoData {
 
 
 
-//    public void setTodoItems(List<TodoItem> todoItems) {
+//    public void setTodoItems(ObservableList<TodoItem> todoItems) {
 //        this.todoItems = todoItems;
 //    }
 

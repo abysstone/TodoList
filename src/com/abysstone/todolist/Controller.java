@@ -5,6 +5,7 @@ import com.abysstone.todolist.datamodel.TodoItem;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 
 public class Controller {
 
-    private List<TodoItem> todoItems;
+    private ObservableList<TodoItem> FIRSTENTRY;
     @FXML
     private ListView<TodoItem> todoListView;
     @FXML
@@ -85,6 +85,29 @@ public class Controller {
 //        todoItems.add(item5);
 //
 //        TodoData.getInstance().setTodoItems(todoItems);
+
+
+
+
+//        TodoItem hardCoded = new TodoItem("Welcome To Manas TodoList", "Add as many number of notes as you wish." +
+//                "Keep in mind the notes you add gets srynchonized with every new update and so new ones will appear towards the bootom of the List" +
+//                " while old ones stacking near the top. Also look after for the items turning red as they are due on todays date. Thanks and wish" +
+//                " you all the best with your goals.!", LocalDate.of(1970, Month.JANUARY, 1));
+//
+//        FIRSTENTRY = new ObservableList<TodoItem>() {
+//        @Override
+//        public void add ( int index, TodoItem element){
+//
+//        }
+//    };
+//
+//FIRSTENTRY.add(hardCoded); //issue observable list is abstract(so binding is the only way is the real reason behind data binding implementation for safe control synch).
+
+
+
+
+
+
 
         todoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TodoItem>() {
             @Override
@@ -157,40 +180,54 @@ public class Controller {
             @Override
             public ListCell<TodoItem> call(ListView<TodoItem> param) {
                 //return null;
-                ListCell<TodoItem> cell = new ListCell<TodoItem>(){
+                ListCell<TodoItem> cell = new ListCell<TodoItem>() {
                     @Override
                     protected void updateItem(TodoItem item, boolean empty) {
                         super.updateItem(item, empty);
-                        if(empty){
+                        if (empty) {
                             setText(null);
-                        }else {
+                        } else {
                             setText(item.getShortDescription());
-                            if(item.getDeadline().equals(LocalDate.now())){
-                                setTextFill(Color.RED);
-                            }else if(item.getDeadline().equals(LocalDate.now().plusDays(1))){
-                                setTextFill(Color.BROWN);
-                            }else if(item.getDeadline().isBefore(LocalDate.now())){
+                            if (item.getDeadline().isBefore(LocalDate.now())) {
                                 setTextFill(Color.DARKORANGE);
+                            } else if (item.getDeadline().equals(LocalDate.now())) {
+                                setTextFill(Color.RED);
+                            } else if (item.getDeadline().equals(LocalDate.now().plusDays(1))) {
+                                setTextFill(Color.BROWN);
+                            }else if (item.getDeadline().isAfter(LocalDate.now().plusDays(1))){
+                                setTextFill(Color.BLACK);
                             }
                         }
                     }
                 };
 
-                cell.emptyProperty().addListener(
-                        (obs, wasEmpty, isNowEmpty) ->{
-                            if(isNowEmpty){
-                                cell.setContextMenu(listContextMenu);
-                            }else
-                                cell.setContextMenu(listContextMenu);
-                        }
-                );
-                return cell;
-            }
-        });
 
+
+                cell.emptyProperty().addListener(
+                        (obs, wasEmpty, isNowEmpty) -> {
+                            if (isNowEmpty) {
+                                cell.setContextMenu(listContextMenu);
+                            } else {
+                                cell.setContextMenu(listContextMenu);
+                            }
+                        });
+                return cell;
+                    }
+
+                });
 
 
     }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -318,4 +355,7 @@ public class Controller {
     }
 
 
-}
+
+        }
+
+
