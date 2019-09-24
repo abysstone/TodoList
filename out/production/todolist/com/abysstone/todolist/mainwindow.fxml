@@ -3,6 +3,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<!--        <?javafx.scene.text.Font.getFamilies?>-->
+
 <BorderPane fx:id="mainBorderPane" fx:controller="com.abysstone.todolist.Controller"
             xmlns:fx="http://javafx.com/fxml">
     <top>
@@ -17,7 +19,7 @@
                 </Menu>
             </MenuBar>
             <ToolBar>
-                <HBox>
+                <HBox spacing="3">
                     <Button onAction="#showNewItemDialog">
                         <tooltip>
                             <Tooltip text="Add a new Todo Item."/>
@@ -28,7 +30,20 @@
                         </ImageView>
                     </graphic>
                     </Button>
-                    <ToggleButton fx:id="filterToggleButton" text="Today's Items" onAction="#handleFilterButton">
+                    <Button onAction="#deleteToolbarControl">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
+                            </ImageView>
+                        </graphic>
+                        <tooltip>
+                            <Tooltip text="Delete the selected Todo Item."/>
+                        </tooltip>
+                    </Button>
+                    <ToggleButton style="-fx-text-fill: #b22222" fx:id="filterToggleButton" text="TODAY" onAction="#handleFilterButton">
+                        <font>
+                            <Font name="Verdana" size="17"/>
+                        </font>
                         <tooltip>
                             <Tooltip text="Button Down: Show today's items only, Button Up: Show all items."/>
                         </tooltip>
@@ -43,19 +58,37 @@
     </left>
     <center>
         <VBox style="-fx-background-color: white">
-            <TextArea fx:id="itemDetailsTextArea" VBox.vgrow="ALWAYS" wrapText="true"/>
-            <HBox>
-                <Label text="Due : ">
+            <TextArea fx:id="itemDetailsTextArea" style="-fx-background-color:  #f5f5f5" VBox.vgrow="ALWAYS" wrapText="true">
+                <font>
+                    <Font size="15"/>
+                </font>
+            </TextArea>
+            <HBox style="-fx-background-color: #eee8aa">
+<!--                ; -fx-blend-mode:-->
+                <Label text="Due: ">
                      <font>
-                         <Font name="Times New Roman bold" size="15"/>
+                         <Font name = "Trebuchet MS" size="17"/>
                      </font>
                 </Label>
                 <Label fx:id="deadLineLabel">
                     <font>
-                        <Font name = "Times New Roman" size="15"/>
+                        <Font name = "Trebuchet MS" size="17"/>
                     </font>
                 </Label>
             </HBox>
+            <Label style="-fx-background-color:#a9a9a9 ;-fx-graphic-text-gap: 5; -fx-text-fill: #f8f8ff" wrapText="true" text="Tasks appearing in the description box towards the left in RED colour are due today while those in BROWN are tomorrow's, Also the items that have passed the due date can be seen with an ORANGE text and all future tasks in BLACK.">
+                <font>
+                    <Font name="Trebuchet MS" size="12"/>
+                </font>
+                <graphic>
+                    <ImageView>
+                        <Image url="@/bulb7pc.gif"/>
+                    </ImageView>
+                </graphic>
+<!--                <tooltip>-->
+<!--                    <Tooltip text="Please note..."/>-->
+<!--                </tooltip>-->
+            </Label>
         </VBox>
     </center>
 </BorderPane>

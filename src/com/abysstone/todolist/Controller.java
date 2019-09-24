@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.effect.MotionBlur;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -53,7 +54,7 @@ public class Controller {
     private Predicate<TodoItem> wantTodaysItems;
 
     public void initialize() {
-
+        motionToday();
         listContextMenu = new ContextMenu();
         MenuItem deleteMenuItem = new MenuItem("Delete");
         deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -311,7 +312,10 @@ public class Controller {
             TodoData.getInstance().deleteTodoItem(item);
         }
     }
-
+    public void deleteToolbarControl(){
+        TodoItem item = todoListView.getSelectionModel().getSelectedItem();
+        deleteItem(item);
+    }
 
 //    public void handleFilterButton(){
 //        if(filterToggleButton.isSelected()){
@@ -347,6 +351,14 @@ public class Controller {
                 filteredList.setPredicate(wantAllItems);
                 todoListView.getSelectionModel().select(selectedItem);
         }
+    }
+    @FXML
+    public void motionToday(){
+        MotionBlur motionBlur = new MotionBlur();
+        motionBlur.setRadius(3);
+        motionBlur.setAngle(180.0);
+
+        filterToggleButton.setEffect(motionBlur);
     }
 
     @FXML
