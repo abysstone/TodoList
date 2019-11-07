@@ -54,7 +54,7 @@ public class Controller {
     private Predicate<TodoItem> wantTodaysItems;
 
     public void initialize() {
-        motionToday();
+     //   motionToday();
         listContextMenu = new ContextMenu();
         MenuItem deleteMenuItem = new MenuItem("Delete");
         deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {

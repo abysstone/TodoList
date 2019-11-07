@@ -20,30 +20,35 @@
             </MenuBar>
             <ToolBar>
                 <HBox spacing="3">
-                    <Button onAction="#showNewItemDialog">
+                    <Button text="New..." onAction="#showNewItemDialog">
                         <tooltip>
                             <Tooltip text="Add a new Todo Item."/>
                         </tooltip>
-                    <graphic>
-                        <ImageView>
-                            <Image url="@/toolbarButtonGraphics/general/New24.gif"/>
-                        </ImageView>
-                    </graphic>
+<!--                    <graphic>-->
+<!--                        <ImageView>-->
+<!--                            <Image url="@/toolbarButtonGraphics/general/New24.gif"/>-->
+<!--                        </ImageView>-->
+<!--                    </graphic>-->
                     </Button>
-                    <Button onAction="#deleteToolbarControl">
-                        <graphic>
-                            <ImageView>
-                                <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
-                            </ImageView>
-                        </graphic>
+                    <Button text="Delete" onAction="#deleteToolbarControl">
+<!--                        <graphic>-->
+<!--                            <ImageView>-->
+<!--                                <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>-->
+<!--                            </ImageView>-->
+<!--                        </graphic>-->
                         <tooltip>
                             <Tooltip text="Delete the selected Todo Item."/>
                         </tooltip>
                     </Button>
-                    <ToggleButton style="-fx-text-fill: #b22222" fx:id="filterToggleButton" text="TODAY" onAction="#handleFilterButton">
-                        <font>
-                            <Font name="Verdana" size="17"/>
-                        </font>
+                    <ToggleButton style="-fx-graphic-text-gap: 0; -fx-text-fill: #b22222" fx:id="filterToggleButton" text="TODAY" onAction="#handleFilterButton">
+<!--                        <graphic>-->
+<!--                            <ImageView>-->
+<!--                                <Image url="@/today.gif"/>-->
+<!--                            </ImageView>-->
+<!--                        </graphic>-->
+<!--                        <font>-->
+<!--                            <Font name="Verdana bold" size="17"/>-->
+<!--                        </font>-->
                         <tooltip>
                             <Tooltip text="Button Down: Show today's items only, Button Up: Show all items."/>
                         </tooltip>
@@ -67,12 +72,12 @@
 <!--                ; -fx-blend-mode:-->
                 <Label text="Due: ">
                      <font>
-                         <Font name = "Trebuchet MS" size="17"/>
+                         <Font name = "Trebuchet MS" size="18"/>
                      </font>
                 </Label>
                 <Label fx:id="deadLineLabel">
                     <font>
-                        <Font name = "Trebuchet MS" size="17"/>
+                        <Font name = "Trebuchet MS" size="18"/>
                     </font>
                 </Label>
             </HBox>
@@ -80,11 +85,11 @@
                 <font>
                     <Font name="Trebuchet MS" size="12"/>
                 </font>
-                <graphic>
-                    <ImageView>
-                        <Image url="@/bulb7pc.gif"/>
-                    </ImageView>
-                </graphic>
+<!--                <graphic>-->
+<!--                    <ImageView>-->
+<!--                        <Image url="@/bulb7pc.gif"/>-->
+<!--                    </ImageView>-->
+<!--                </graphic>-->
 <!--                <tooltip>-->
 <!--                    <Tooltip text="Please note..."/>-->
 <!--                </tooltip>-->
